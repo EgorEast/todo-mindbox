@@ -1,4 +1,16 @@
 import { List, Checkbox } from 'antd'
+import styled, { css } from 'styled-components'
+
+const StyledText = styled.div<{ checked: boolean }>`
+  margin-left: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  ${({ checked }) => css`
+    text-decoration: ${checked && 'line-through'};
+    color: var(${checked ? '--color-disabled' : '--color-black'});
+  `}
+`
 
 export interface TodoProps {
   id: string
@@ -11,17 +23,11 @@ interface TodoItemProps extends TodoProps {
 }
 
 const TodoItem = ({ text, checked, onClick }: TodoItemProps) => (
-  <List.Item style={{ justifyContent: 'flex-start' }}>
+  <List.Item style={{ justifyContent: 'flex-start', paddingLeft: 10, paddingRight: 10 }}>
     <Checkbox checked={checked} style={{ borderRadius: '50%' }} onClick={onClick} />
-    <div
-      style={{
-        marginLeft: 10,
-        textDecoration: checked ? 'line-through' : '',
-        color: checked ? 'var(--color-disabled)' : '#000',
-      }}
-    >
+    <StyledText checked={checked} title={text} onCopy={() => navigator.clipboard.writeText(text)}>
       {text}
-    </div>
+    </StyledText>
   </List.Item>
 )
 

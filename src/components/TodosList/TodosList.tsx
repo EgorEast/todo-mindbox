@@ -2,7 +2,7 @@ import { CaretDownOutlined } from '@ant-design/icons'
 import { Input, List } from 'antd'
 import TodoItem from 'components/TodoItem'
 import TodoListFooter from 'components/TodoListFooter'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import type { RadioChangeEvent } from 'antd'
@@ -20,9 +20,13 @@ enum ViewMode {
   Left = 'left',
 }
 
+const LOCAL_STORAGE_KEY = 'todos'
+
 const TodosList = () => {
+  const initialValue = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]') as TodoProps[]
+
   const [inputValue, setInputValue] = useState('')
-  const [todos, setTodos] = useState<TodoProps[]>([])
+  const [todos, setTodos] = useState<TodoProps[]>(initialValue)
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.All)
 
   const addItemToActive = (newItem: TodoProps) => setTodos(prev => [...prev, newItem])
@@ -67,6 +71,9 @@ const TodosList = () => {
   const onClickClearCompleted: React.MouseEventHandler<HTMLElement> = () =>
     setTodos(prevTodos => prevTodos.filter(({ checked }) => !checked))
 
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos))
+  }, [todos])
   return (
     <StyledTodosList
       header={
